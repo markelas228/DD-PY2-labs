@@ -5,7 +5,7 @@ class Book:
         self.pages = pages
 
     def __str__(self):
-        return f'\u041a\u043d\u0438\u0433\u0430 "{self.name}"'
+        return f'Книга "{self.name}"'
 
     def __repr__(self):
         return f"Book(id_={self.id}, name='{self.name}', pages={self.pages})"
@@ -13,36 +13,46 @@ class Book:
 
 class Library:
     def __init__(self, books=None):
+        # Если books не передан, инициализируем пустым списком
         self.books = books if books is not None else []
 
     def get_next_book_id(self):
-        if not self.books:
+        if not self.books:  # Если книг нет, возвращаем id = 1
             return 1
+        # Возвращаем id последней книги + 1
         return self.books[-1].id + 1
 
     def get_index_by_book_id(self, book_id):
-        for index, book in enumerate(self.books):
+        for index, book in enumerate(self.books):  # Используем enumerate для индексации
             if book.id == book_id:
                 return index
-        raise ValueError("\u041a\u043d\u0438\u0433\u0438 \u0441 \u0437\u0430\u043f\u0440\u0430\u0448\u0438\u0432\u0430\u0435\u043c\u044b\u043c id \u043d\u0435 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u0435\u0442")
+        # Если книга с заданным id не найдена, вызываем ValueError
+        raise ValueError("Книги с запрашиваемым id не существует")
 
 # Пример использования
 if __name__ == "__main__":
-    # Создаем книги
-    book1 = Book(1, "Война и мир", 1225)
-    book2 = Book(2, "Преступление и наказание", 671)
+    # Создаем несколько книг
+    book1 = Book(id_=1, name='Война и мир', pages=1225)
+    book2 = Book(id_=2, name='Преступление и наказание', pages=671)
 
     # Создаем библиотеку
-    library = Library([book1, book2])
+    library = Library(books=[book1, book2])
 
-    # Выводим следующего ID для новой книги
-    print(library.get_next_book_id())  # Ожидается 3
+    # Добавляем новую книгу с автоматическим id
+    next_id = library.get_next_book_id()
+    new_book = Book(id_=next_id, name='Мастер и Маргарита', pages=470)
+    library.books.append(new_book)
 
-    # Получаем индекс книги по ID
-    print(library.get_index_by_book_id(1))  # Ожидается 0
+    # Выводим книги
+    print(library.books)  # [Book(id_=1, name='Война и мир', pages=1225), ...]
 
-    # Пробуем вызвать ошибку, запрашивая несуществующий ID
+    # Получаем индекс книги по id
+    index = library.get_index_by_book_id(2)
+    print(f"Индекс книги с id 2: {index}")
+
+    # Пример обработки ошибки
     try:
-        library.get_index_by_book_id(3)
+        library.get_index_by_book_id(10)  # Книга с id 10 не существует
     except ValueError as e:
-        print(e)  # "Книги с запрашиваемым id не существует"
+        print(e)
+        
